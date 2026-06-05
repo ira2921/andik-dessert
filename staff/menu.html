@@ -63,6 +63,21 @@
 .row-critical { background: #FFF3E0 !important; }
 .row-out      { background: #FFEBEE !important; }
 
+/* Info icon styling */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background-color: #DC3545;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 6px;
+  cursor: help;
+}
 
 
 </style>
@@ -143,6 +158,13 @@
           <option>Rice</option>
           <option>Noodles</option>
         </select>
+        <select id="stockFilter" class="form-select" style="max-width:220px;border-radius:10px" onchange="renderTable()">
+        <option value="">All Stocks</option>
+        <option value="out">Out of Stock</option>
+        <option value="critical">Critical (1–5)</option>
+        <option value="low">Low (6–10)</option>
+        <option value="good">Good (11+)</option>
+        </select>
       </div>
     </div>
     <div class="panel p-0">
@@ -183,7 +205,7 @@
             <input type="number" id="fPrice" class="form-control" placeholder="0.00" step="0.01" style="border-radius:10px">
           </div>
           <div class="col-md-6">
-            <label class="form-label fw-600" style="font-weight:600;font-size:.88rem">Stock Quantity *</label>
+            <label class="form-label fw-600" style="font-weight:600;font-size:.88rem">Stock Quantity * <span class="info-icon" title="Only whole numbers are allowed">i</span></label>
             <input type="number" id="fStock" class="form-control" placeholder="0" min="0" style="border-radius:10px">
           </div>
           <div class="col-12">
@@ -294,11 +316,19 @@ async function renderTable() {
 
 
 
-  const items = allItems.filter(i => {
-    const matchSearch = i.name.toLowerCase().includes(search);
-    const matchCategory = !category || i.category === category;
-    return matchSearch && matchCategory;
-  });
+  const items = allItems
+    .filter(i => i.name.toLowerCase().includes(search))
+    .filter(i => !category || i.category === category)
+    .filter(i => {
+      const stock = parseInt(i.stock);
+      if (!stockFilter) return true;
+      if (stockFilter === 'out') return stock === 0;
+      if (stockFilter === 'critical') return stock >= 1 && stock <= 5;
+      if (stockFilter === 'low') return stock >= 6 && stock <= 10;
+      if (stockFilter === 'good') return stock > 10;
+      return true;
+    });
+    
   const tb = document.getElementById('menuTable');
   if (!items.length) { tb.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No items found.</td></tr>'; return; }
   checkLowStock(allItems);
