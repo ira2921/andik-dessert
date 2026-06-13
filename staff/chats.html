@@ -11,7 +11,7 @@
 *{font-family:'Poppins',sans-serif;}body{background:#F4F5F7;margin:0;}
 
 /* SIDEBAR */
-.sidebar{width:var(--sw);min-height:100vh;background:var(--bk);position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:200;}
+.sidebar{width:var(--sw);height:100vh;background:var(--bk);position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:200;overflow:hidden;}
 .sb-header{padding:1.2rem;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
 .sb-logo{width:42px;height:42px;background:var(--y);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:var(--bk);flex-shrink:0;}
 .sb-brand{color:var(--y);font-weight:700;font-size:.9rem;line-height:1.2;}
@@ -42,7 +42,7 @@
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); background: #FF1744; }
 }
-.sb-footer{padding:1rem 1.4rem;border-top:1px solid rgba(255,255,255,.08);margin-top:auto;}
+.sb-footer{padding:1rem 1.4rem;border-top:1px solid rgba(255,255,255,.08);margin-top:auto;flex-shrink:0;}
 
 /* MAIN */
 .main{margin-left:var(--sw);display:flex;flex-direction:column;min-height:100vh;}
@@ -83,7 +83,7 @@
 .msg-time{font-size:.65rem;opacity:.6;margin-top:3px;text-align:right;}
 .msg.received .msg-time{text-align:left;}
 .chat-input-area{background:#fff;padding:.9rem 1.2rem;border-top:1px solid #EBEBEB;display:flex;gap:.6rem;align-items:center;}
-.chat-input{flex:1;border:1.5px solid #E0E0E0;border-radius:24px;padding:.55rem 1.2rem;font-size:.88rem;outline:none;font-family:'Poppins',sans-serif;resize:none;}
+.chat-input{flex:1;border:1.5px solid #E0E0E0;border-radius:24px;padding:.55rem 1.2rem;font-size:16px;outline:none;font-family:'Poppins',sans-serif;resize:none;}
 .chat-input:focus{border-color:var(--y);}
 .send-btn{width:42px;height:42px;background:var(--y);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.2s;}
 .send-btn:hover{background:var(--yd);}
@@ -142,6 +142,8 @@
 
 .chat-header{background:#fff;padding:.9rem 1.4rem;border-bottom:1px solid #EBEBEB;display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .chat-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#bbb;}
+
+#deleteConfirmToast:hover { opacity: 1 !important; }
 </style>
 </head>
 <body>
@@ -670,8 +672,9 @@ function deleteMessage(msgId) {
   document.body.appendChild(toast);
 
   setTimeout(() => {
-  document.getElementById('deleteConfirmToast')?.remove();
-}, 8000);
+  const toast = document.getElementById('deleteConfirmToast');
+  if (toast && !toast.matches(':hover')) toast.remove();
+}, 15000);
 }
 
 async function confirmDeleteMsg(msgId) {
